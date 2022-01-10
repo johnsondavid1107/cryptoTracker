@@ -26,18 +26,10 @@ function Add() {
         setList(listOfCrypto => [...listOfCrypto, obj])
 
         console.log(listOfCrypto)
-        store()
-        checkState()
+
     }
 
-    const store = () => {
 
-        localStorage.setItem('yourList', listOfCrypto)
-    }
-
-    const checkState = () => {
-        console.log(listOfCrypto)
-    }
 
     return (
         <div>
@@ -70,7 +62,7 @@ function Add() {
             </div>
 
 
-            <button onClick={checkState}>Check State</button>
+
 
         </div>
     )

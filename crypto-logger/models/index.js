@@ -1,3 +1,3 @@
 module.exports = {
-    Crypto: require("./crypto_model");
+    Crypto: require("./crypto_model")
 }
