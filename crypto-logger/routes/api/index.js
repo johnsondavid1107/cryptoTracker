@@ -2,12 +2,16 @@ const router = require("express").Router();
 const controller = require("../../controller/cryptoController")
 
 
+router.route("/create").post(
 
-router.route("/create").post(controller.create)
+    controller.create
+)
+//router.route("/create").post(controller.create)
+router.route("/get").get(
+    controller.find
+)
 
-router.use(function (req, res) {
-    res.sendFile(path.join(__dirname, "../client/build/index.html"));
-});
+
 
 
 module.exports = router;

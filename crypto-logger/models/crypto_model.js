@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const date = new Date();
+const day = date.getDate();
+const month = date.getMonth();
+const year = date.getFullYear();
+const todaysDate = `${day}/${month + 1}/${year}`
+console.log(todaysDate)
+
 
 
 const cryptoSchema = new Schema({
@@ -9,15 +15,12 @@ const cryptoSchema = new Schema({
     name: {
         type: String
     },
-    initial: {
-        type: Number
-    },
     total: {
         type: Number
     },
     date: {
-        type: Date,
-        default: date.getDate()
+        type: String,
+        default: todaysDate
 
     }
 })
