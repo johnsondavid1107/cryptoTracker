@@ -18,11 +18,27 @@ const cryptoSchema = new Schema({
     total: {
         type: Number
     },
+    price: {
+        type: Number
+    },
     date: {
         type: String,
         default: todaysDate
 
-    }
+    },
+    entries: [{
+        amount: {
+            type: Number
+        },
+        marketPrice: {
+            type: Number
+        },
+        date: {
+            type: String,
+            default: todaysDate
+        }
+
+    }]
 })
 
 

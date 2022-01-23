@@ -8,9 +8,15 @@ router.route("/create").post(
 )
 //router.route("/create").post(controller.create)
 router.route("/get").get(
+
     controller.find
 )
-
+router.route('/delete/:deleteParam').delete(
+    controller.delete
+)
+router.route('/update/:updateRequest').put(
+    controller.update
+)
 
 
 
