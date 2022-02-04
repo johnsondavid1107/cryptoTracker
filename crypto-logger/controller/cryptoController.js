@@ -13,6 +13,7 @@ module.exports = {
             name: req.body.name,
             total: req.body.value,
             price: req.body.price,
+            cryptoConversion: req.body.crypto,
             entries: [{
                 amount: req.body.value,
                 marketPrice: req.body.price

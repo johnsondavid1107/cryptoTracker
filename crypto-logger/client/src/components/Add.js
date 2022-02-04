@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from "../utils/API"
+import DatePicker from 'react-date-picker'
 import "../Assets/style.css"
 
 
@@ -9,7 +10,9 @@ function Add() {
     const [name, setCryptoName] = useState('');
     const [value, setCryptoValue] = useState('');
     const [price, setCryptoPrice] = useState('');
-    const [dbResponse, setResponse] = useState('')
+    const [marketValue, setMarketValue] = useState('')
+    const [totalCrypto, setTotal] = useState(0)
+    const [date, setDate] = useState(new Date())
 
     const [listOfCrypto, setList] = useState([]);
 
@@ -36,11 +39,25 @@ function Add() {
         setCryptoPrice(event.target.value)
 
     }
+    function handleMarketChange(event) {
+
+        console.log(event.target.value)
+        setMarketValue(event.target.value)
+
+    }
+
     function getIt() {
         API.getCrypto().then(function (response) {
             console.log(response.data.length)
             if (response.data.length !== 0) {
+                let total = 0;
+                console.log(response.data)
+                response.data.forEach(element => {
+                    total += element.total
+                });
                 setList(response.data)
+                setTotal(total);
+
                 console.log(listOfCrypto)
             }
 
@@ -48,13 +65,9 @@ function Add() {
     }
     function handleAdd(e) {
         let id = e.target.parentNode.id
-        //this is sloppy but it targets the 8th element which is the USD input and the 9th element which is the Crypto Price Element if I add more elements it will throw this off 
-
-
-
-
         let add = document.querySelector(`[data-value='${id}USD']`).value
-        let price = document.querySelector(`[data-value='${id}Price']`).value
+        let price = add * document.querySelector(`[data-value='${id}Price']`).value
+        setTotal(totalCrypto + parseInt(add))
         API.updateCrypto({
             amount: add,
             price: price,
@@ -70,18 +83,20 @@ function Add() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(parseInt(price) * parseInt(value))
         let obj = {
             name: name,
             value: value,
             price: price,
-            initial: 0,
+            crypto: value / price,
+            date: date
 
         }
+        setTotal(totalCrypto + parseInt(value));
 
         API.createCrypto(obj).then(function () {
             getIt();
         })
-
 
         console.log(listOfCrypto)
         document.getElementById("cryptoName").value = ""
@@ -100,18 +115,32 @@ function Add() {
         )
         console.log(e.target.parentNode.id)
     }
+    function handleCalculate(e) {
+        console.log(e.target.parentNode.id)
+        console.log()
+        let total = document.querySelector(`[data-id='${e.target.parentNode.id}']`).textContent
 
+        let profit = total - marketValue;
+        console.log(profit)
+        setMarketValue('')
+    }
 
 
     return (
         <div>
 
             <h1>Enter your CryptoCurrencies</h1>
+            <h3>Total Crypto Purchsed: <span>{totalCrypto}</span></h3>
 
             <form>
                 <input type="text" id="cryptoName" onChange={handleNameChange} placeholder="Name of Crypto"></input>
                 <input type="text" id="cryptoAmount" onChange={handleAmountChange} placeholder="Amount"></input>
                 <input type="text" id="cryptoPrice" onChange={handlePriceChange} placeholder="Price"></input>
+                <DatePicker
+                    onChange={setDate}
+                    value={date}
+
+                />
                 <button id="addCrypto" onClick={handleSubmit}>Add Here</button>
 
             </form>
@@ -119,14 +148,14 @@ function Add() {
             <ul>
 
                 {listOfCrypto.map((query, i) => (
-                    console.log(query),
+
                     <li key={query + i} id={query._id} style={{ listStyleType: "none" }}>
                         <h2 className="">{query.name}
                         </h2> |
-                        <h2 className='listEl'>USD: {query.total}</h2> |
+                        <h2 className='listEl'>USD: <span data-id={query._id}>{query.total}</span></h2> |
                         <h4 className='listEl'>at ${query.price}</h4>
-                        <input placeholder="Total Market Value Now"></input>
-                        <button>
+                        <input placeholder="Total Market Value Now" onChange={handleMarketChange}></input>
+                        <button onClick={handleCalculate}>
                             Click to calculate
                         </button>
                         <h2 className='listEl'>Calculated Profit</h2>
@@ -136,7 +165,7 @@ function Add() {
                         <input placeholder="Enter Crypto Price" data-value={`${query._id}Price`}></input>
                         <button onClick={handleAdd}>{query.name}</button> |<ul>
                             {query.entries.map((selection, i) => (
-                                console.log(selection),
+
                                 <li key={selection + i} style={{ listStyleType: "none" }}>
                                     <h3>On: {selection.date} you purchased {selection.amount} at: {selection.marketPrice}</h3>
                                 </li>

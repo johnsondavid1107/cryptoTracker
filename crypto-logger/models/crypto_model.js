@@ -26,6 +26,9 @@ const cryptoSchema = new Schema({
         default: todaysDate
 
     },
+    cryptoConversion: {
+        type: Number
+    },
     entries: [{
         amount: {
             type: Number
