@@ -17,6 +17,9 @@ router.route('/delete/:deleteParam').delete(
 router.route('/update/:updateRequest').put(
     controller.update
 )
+router.route('/profit/:profit').put(
+    controller.profit
+)
 
 
 

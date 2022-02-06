@@ -64,7 +64,7 @@ function Add() {
         });
     }
     function handleAdd(e) {
-        let id = e.target.parentNode.id
+        let id = e.target.parentNode.parentNode.id
         let add = document.querySelector(`[data-value='${id}USD']`).value
         let price = add * document.querySelector(`[data-value='${id}Price']`).value
         setTotal(totalCrypto + parseInt(add))
@@ -107,71 +107,92 @@ function Add() {
     function findId(e) {
 
         console.log()
-        API.deleteCrypto(e.target.parentNode.id).then(
+        API.deleteCrypto(e.target.parentNode.parentNode.id).then(
             function () {
                 console.log()
                 getIt()
             }
         )
-        console.log(e.target.parentNode.id)
     }
     function handleCalculate(e) {
-        console.log(e.target.parentNode.id)
-        console.log()
-        let total = document.querySelector(`[data-id='${e.target.parentNode.id}']`).textContent
 
+        let total = document.querySelector(`[data-id='${e.target.parentNode.parentNode.id}']`).textContent
         let profit = total - marketValue;
-        console.log(profit)
+
+        if (profit < 0) {
+            e.target.nextElementSibling.textContent = `+ ${Math.abs(profit).toFixed(2)}`
+
+            API.profitCrypto({
+                id: e.target.parentNode.parentNode.id,
+                profit: Math.abs(profit).toFixed(2)
+            })
+        } else {
+            e.target.nextElementSibling.textContent = `- ${Math.abs(profit).toFixed(2)}`
+            API.profitCrypto({
+                id: e.target.parentNode.parentNode.id,
+                profit: Math.abs(profit).toFixed(2)
+            })
+        }
         setMarketValue('')
+        console.log()
     }
+
 
 
     return (
         <div>
+            <section className='text-center'>
 
-            <h1>Enter your CryptoCurrencies</h1>
-            <h3>Total Crypto Purchsed: <span>{totalCrypto}</span></h3>
 
-            <form>
-                <input type="text" id="cryptoName" onChange={handleNameChange} placeholder="Name of Crypto"></input>
-                <input type="text" id="cryptoAmount" onChange={handleAmountChange} placeholder="Amount"></input>
-                <input type="text" id="cryptoPrice" onChange={handlePriceChange} placeholder="Price"></input>
-                <DatePicker
-                    onChange={setDate}
-                    value={date}
+                <h1>Enter your CryptoCurrencies</h1>
+                <h3>Total Crypto Purchsed: <span>{totalCrypto}</span></h3>
 
-                />
-                <button id="addCrypto" onClick={handleSubmit}>Add Here</button>
+                <form>
+                    <input type="text" id="cryptoName" onChange={handleNameChange} placeholder="Name of Crypto"></input>
+                    <input type="text" id="cryptoAmount" onChange={handleAmountChange} placeholder="Amount"></input>
+                    <input type="text" id="cryptoPrice" onChange={handlePriceChange} placeholder="Price"></input>
+                    <DatePicker
+                        onChange={setDate}
+                        value={date}
 
-            </form>
+                    />
+                    <button id="addCrypto" onClick={handleSubmit}>Add Here</button>
 
+                </form>
+            </section>
             <ul>
 
                 {listOfCrypto.map((query, i) => (
 
-                    <li key={query + i} id={query._id} style={{ listStyleType: "none" }}>
-                        <h2 className="">{query.name}
-                        </h2> |
-                        <h2 className='listEl'>USD: <span data-id={query._id}>{query.total}</span></h2> |
-                        <h4 className='listEl'>at ${query.price}</h4>
-                        <input placeholder="Total Market Value Now" onChange={handleMarketChange}></input>
-                        <button onClick={handleCalculate}>
-                            Click to calculate
-                        </button>
-                        <h2 className='listEl'>Calculated Profit</h2>
-                        <button onClick={findId}>Delete</button>
-                        <br></br>
-                        <input placeholder="Enter More USD" data-value={`${query._id}USD`}></input>
-                        <input placeholder="Enter Crypto Price" data-value={`${query._id}Price`}></input>
-                        <button onClick={handleAdd}>{query.name}</button> |<ul>
-                            {query.entries.map((selection, i) => (
+                    <li key={query + i} style={{ listStyleType: "none" }}>
+                        <div className="container">
+                            <div className="row" id={query._id} >
+                                <div className="col-md-2 text-center">
+                                    <h2>{query.name}</h2>
+                                    <h2 className='listEl'>$<span data-id={query._id}>{query.total}</span></h2>
+                                </div>
+                                <div className="col-md-10">
 
-                                <li key={selection + i} style={{ listStyleType: "none" }}>
-                                    <h3>On: {selection.date} you purchased {selection.amount} at: {selection.marketPrice}</h3>
-                                </li>
-                            ))}
-                        </ul>
-                        <hr></hr>
+                                    {/* <h4 className='listEl'>at ${query.price}</h4> */}
+                                    <input placeholder="Total Market Value Now" onChange={handleMarketChange}></input>
+                                    <button onClick={handleCalculate}>Click to calculate</button>
+                                    <h2 className='listEl'>Calculated Profit</h2>
+                                    <button onClick={findId}>Delete</button>
+                                    <br></br>
+                                    <input placeholder="Enter More USD" data-value={`${query._id} USD`}></input>
+                                    <input placeholder="Enter Crypto Price" data-value={`${query._id} Price`}></input>
+                                    <button onClick={handleAdd}>{query.name}</button> |<ul>
+                                        {query.entries.map((selection, i) => (
+
+                                            <li key={selection + i} style={{ listStyleType: "none" }}>
+                                                <h3>On: {selection.date} you purchased {selection.amount} at: {selection.marketPrice}</h3>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <hr></hr>
+                                </div>
+                            </div>
+                        </div>
                     </li>
 
                 ))

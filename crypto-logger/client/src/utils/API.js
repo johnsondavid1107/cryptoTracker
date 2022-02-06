@@ -29,6 +29,10 @@ export default {
             }
 
         )
+    },
+    profitCrypto: function (profit){
+        return axios.put('/api/profit/' + JSON.stringify(profit))
+
     }
 
 

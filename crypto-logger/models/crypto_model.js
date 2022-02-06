@@ -26,6 +26,10 @@ const cryptoSchema = new Schema({
         default: todaysDate
 
     },
+    profit: {
+        type: String
+
+    },
     cryptoConversion: {
         type: Number
     },
